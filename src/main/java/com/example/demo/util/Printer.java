@@ -50,8 +50,8 @@ public class Printer {
 			if (!sb.isEmpty()) {
 				sb.append("\n");
 			}
-			sb.insert(0, pattern.getHeaders() + "\n");
 		}
+		sb.insert(0, pattern.getHeaders() + "\n");
 		return sb.toString();
 	}
 
