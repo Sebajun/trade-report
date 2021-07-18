@@ -43,21 +43,22 @@ To generates any report we need a list of trades and a printing pattern. The pat
 ```java
 
 /**
-    * Print a list of trade using a printing pattern and a list of trades
+    * Print a list of trade given a print pattern and a list of trades
     * 
-    * @param pattern the pattern
-    * @param trades the trades to print
+    * @param pattern
+    * @param trades
+    * @return
     */
-public static String printTrades(PrintingPattern pattern, List<Trade> trades) {
+public static String printTrades(PrintingPattern pattern, Stream<Trade> trades) {
 
-    if (pattern == null || trades == null || trades.isEmpty()) {
+    if (pattern == null || trades == null) {
         return "";
     }
 
     List<String> fieldsToPrint = filterTradeList(pattern.getFieldsToPrint());
 
     StringBuilder sb = new StringBuilder();
-    for (Trade trade : trades) {
+    trades.forEach(trade -> {
         JSONObject tradeAsJson = new JSONObject(trade);
         for (String field : fieldsToPrint) {
             sb.append(getFieldFromJson(tradeAsJson, field));
@@ -67,7 +68,7 @@ public static String printTrades(PrintingPattern pattern, List<Trade> trades) {
         if (!sb.isEmpty()) {
             sb.append("\n");
         }
-    }
+    });
     sb.insert(0, pattern.getHeaders() + "\n");
     return sb.toString();
 }

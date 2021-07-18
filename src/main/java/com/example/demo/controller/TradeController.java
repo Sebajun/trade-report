@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
-import java.util.List;
+import java.util.stream.Stream;
+
+import javax.transaction.Transactional;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +35,7 @@ public class TradeController {
 		this.brokerService = brokerService;
 	}
 
+	@Transactional
 	@GetMapping("/trade")
 	public String findTrades(@RequestParam(name = "product") String productName,
 			@RequestParam(name = "broker") String brokerName, @RequestParam String date) {
@@ -43,7 +46,7 @@ public class TradeController {
 		if (product == null || broker == null) {
 			return "";
 		}
-		List<Trade> tradeList = tradeService.findTrades(product.getId(), broker.getId(), date);
+		Stream<Trade> tradeList = tradeService.findTrades(product.getId(), broker.getId(), date);
 		PrintingPattern pattern = printingPatternService.findPrintingPattern(product.getId(), broker.getId());
 
 		return Printer.printTrades(pattern, tradeList);

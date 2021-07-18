@@ -1,7 +1,6 @@
 package com.example.demo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,17 +59,14 @@ class PrinterTest {
 
 	@Test
 	void test_pattern_null() {
-		ArrayList<Trade> trades = new ArrayList<>();
-		Printer.printTrades(null, trades);
+		Printer.printTrades(null, Stream.of());
 	}
 
 	@Test
 	void test_pattern_all_empty_fields() {
-		List<Trade> trades = new ArrayList<>();
-		trades.add(trade);
 		pattern.setFieldsToPrint("");
 		String expect = "tradeRef,productId,productName,tradeDate,qty,buySell,price\n";
-		Assertions.assertEquals(expect, Printer.printTrades(pattern, trades));
+		Assertions.assertEquals(expect, Printer.printTrades(pattern, Stream.of(trade)));
 	}
 
 	@Test
@@ -78,26 +74,20 @@ class PrinterTest {
 		trade.setBuySell(null);
 		trade.setTradeDate(null);
 		trade.setTradeRef(null);
-		List<Trade> trades = new ArrayList<>();
-		trades.add(trade);
 		String expect = "tradeRef,productId,productName,tradeDate,qty,buySell,price\n<null>,1,AUDNZD FRD Exp14Jul2021,<null>,1000000,<null>,1.067591\n";
-		Assertions.assertEquals(expect, Printer.printTrades(pattern, trades));
+		Assertions.assertEquals(expect, Printer.printTrades(pattern, Stream.of(trade)));
 	}
 
 	@Test
 	void test_pattern_contains_empty_field() {
-		List<Trade> trades = new ArrayList<>();
-		trades.add(trade);
 		pattern.setFieldsToPrint("tradeRef, product.id,,, qty,buySell, price");
 		String expect = "tradeRef,productId,productName,tradeDate,qty,buySell,price\nT-FWD-1,1,,,1000000,B,1.067591\n";
-		Assertions.assertEquals(expect, Printer.printTrades(pattern, trades));
+		Assertions.assertEquals(expect, Printer.printTrades(pattern, Stream.of(trade)));
 	}
 
 	@Test
 	void test_success() {
-		List<Trade> trades = new ArrayList<>();
-		trades.add(trade);
-		Assertions.assertEquals(expected, Printer.printTrades(pattern, trades));
+		Assertions.assertEquals(expected, Printer.printTrades(pattern, Stream.of(trade)));
 	}
 
 }

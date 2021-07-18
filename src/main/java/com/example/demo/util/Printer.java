@@ -31,16 +31,16 @@ public class Printer {
 	 * @param trades
 	 * @return
 	 */
-	public static String printTrades(PrintingPattern pattern, List<Trade> trades) {
+	public static String printTrades(PrintingPattern pattern, Stream<Trade> trades) {
 
-		if (pattern == null || trades == null || trades.isEmpty()) {
+		if (pattern == null || trades == null) {
 			return "";
 		}
 
 		List<String> fieldsToPrint = filterTradeList(pattern.getFieldsToPrint());
 
 		StringBuilder sb = new StringBuilder();
-		for (Trade trade : trades) {
+		trades.forEach(trade -> {
 			JSONObject tradeAsJson = new JSONObject(trade);
 			for (String field : fieldsToPrint) {
 				sb.append(getFieldFromJson(tradeAsJson, field));
@@ -50,7 +50,7 @@ public class Printer {
 			if (!sb.isEmpty()) {
 				sb.append("\n");
 			}
-		}
+		});
 		sb.insert(0, pattern.getHeaders() + "\n");
 		return sb.toString();
 	}
