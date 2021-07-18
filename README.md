@@ -9,7 +9,71 @@ Intellij or Eclipse.
 
 ## Getting Started
 
-The app allows you to print trading reports through HTTP request.
+This projet opens an API to be consumed to print trading reports through an HTTP GET request.
+
+The only endpoint is ``localhost:8080/trade?product=xxx&broker=xxx&date=YYYYMMDD``
+
+| Param | Description |
+|---|---|
+|`product`  | Product's name<br> |
+|`broker`  | Broker's name
+|`date`  | Date in <b>YYYYMMDD</b> format<br> |
+
+## Screenshot
+An example using postman :
+
+![Postman screenshot](https://i.ibb.co/V2gNHrY/tg.png)
+
+## Installing and Running
+
+Simply import the project in one of the above IDE, and launch the spring boot app.
+
+To generate the report make a get request with the 3 params :
+
+```http://localhost:8080/trade?product=AUDNZD FRD Exp14Jul2021&broker=BROKER A&date=20200408```
+
+<b> Important Note :</b> parameters with space are usually not encourged, but the url will be encoded so it is safe. Otherwise we could also make it work using body in a POST request for more solidity.
+
+## Core Printing System
+
+The core of the printing system can be found in the Printer class ``/src/main/java/com/example/demo/util/Printer.class``, more specifically the printTrades method.
+
+To generates any report we need a list of trades and a printing pattern. The pattern and the trades are retrieve using spring boot layered services. Read the code for more in depth understanding.
+
+```java
+
+/**
+    * Print a list of trade using a printing pattern and a list of trades
+    * 
+    * @param pattern the pattern
+    * @param trades the trades to print
+    */
+public static String printTrades(PrintingPattern pattern, List<Trade> trades) {
+
+    if (pattern == null || trades == null || trades.isEmpty()) {
+        return "";
+    }
+
+    List<String> fieldsToPrint = filterTradeList(pattern.getFieldsToPrint());
+
+    StringBuilder sb = new StringBuilder();
+    for (Trade trade : trades) {
+        JSONObject tradeAsJson = new JSONObject(trade);
+        for (String field : fieldsToPrint) {
+            sb.append(getFieldFromJson(tradeAsJson, field));
+            sb.append(pattern.getSeparator());
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        if (!sb.isEmpty()) {
+            sb.append("\n");
+        }
+    }
+    sb.insert(0, pattern.getHeaders() + "\n");
+    return sb.toString();
+}
+```
+
+This approach is efficient because we can later develop a simple front end to create new printing pattern to produce the desired printing report.
 
 Assuming we have these 3 types of object  :
 
@@ -23,8 +87,8 @@ product : {
 
 | Field | Description |
 |---|---|
-|`id`  | product id |
-|`name`  |  product name
+|`id`  | Product id |
+|`name`  | Product name
 
 ### Broker
 ```
@@ -35,8 +99,8 @@ broker : {
 ```
 | Field | Description |
 |---|---|
-|`id`  | broker id |
-|`name`  |  broker name
+|`id`  | Broker id |
+|`name`  |  Broker name
 
 ### Trade
 ```
@@ -60,14 +124,14 @@ trade : {
 
 | Field | Description |
 |---|---|
-|`id`  | trade id<br> |
-|`tradeRef`  | trade reference
-|`tradeDate`  | trade date<br> |
-|`qty`  | quantity
-|`buySell`  | buy or sell<br> |
-|`price`  | trade price
-|`product`  | reference to <b>product</b> object<br> |
-|`broker`  | reference to <b>broker</b> object
+|`id`  | Trade id<br> |
+|`tradeRef`  | Trade reference
+|`tradeDate`  | Trade date<br> |
+|`qty`  | Quantity
+|`buySell`  | Buy or sell<br> |
+|`price`  | Trade price
+|`product`  | Reference to <b>Product</b> object<br> |
+|`broker`  | Reference to <b>Broker</b> object
 
 
 it is possible to create an infinite number of printing pattern by defining a priting pattern object like this :
@@ -92,11 +156,11 @@ printing_pattern : {
 | Field | Description |
 |---|---|
 |`id`  | pattern id<br> |
-|`fieldsToPrint`  | the list of fields from the trade object you want to print, seperated by a comma
+|`fieldsToPrint`  | the list of fields from the <b>Trade</b> object you want to print, seperated by a comma
 |`headers`  | the first line you want to print in your report, most often you will list the fields name<br> |
 |`separator`  | the separator you want to use between every field of the trade
-|`product`  | reference to <b>product</b> object<br> |
-|`broker`  | reference to <b>broker</b> object
+|`product`  | reference to <b>Product</b> object<br> |
+|`broker`  | reference to <b>Broker</b> object
 
 ### Example
 Given this trade and printing pattern 
@@ -122,7 +186,7 @@ trade : {
 ```
 printing_pattern : {
     id: 1, 
-	fieldsToPrint : "tradeRef, product.id, product.name, tradeDate, qty,buySell, price",
+	fieldsToPrint : "tradeRef, product.id, product.name, tradeDate, qty, buySell, price",
 	headers : "tradeRef;productId;productName;tradeDate;qty;buySell;price",
 	separator : ";" ,
     product : {
@@ -142,34 +206,6 @@ We would obtain the following report :
 tradeRef;productId;productName;tradeDate;qty;buySell;price
 T-FWD-1;1;AUDNZD FRD Exp14Jul2021;20200408;1000000;B;1.067591
 ```
-
-This approach is efficient because we can later develop a simple front end to create new printing pattern to produce the desired printing report.
-
-
-## Installing and Running
-
-Simply import the project in one of the above IDE, and launch the spring boot app.
-
-To generate the report make a get request with 3 params :
-
-```http://localhost:8080/trade?product=AUDNZD FRD Exp14Jul2021&broker=BROKER A&date=20200408```
-
-<b> Important Note :</b> parameters with space are usually not encourged, but the url will be encoded so it is safe. Otherwise we could also make it work using body in a POST request for more solidity.
-
-| Param | Description |
-|---|---|
-|`product`  | Product's name<br> |
-|`broker`  | Broker's name
-|`date`  | date in <b>YYYYMMDD</b> format<br> |
-
-## Screenshot
-![Postman screenshot](https://i.ibb.co/V2gNHrY/tg.png)
-
-
-
-## Core Priting System
-
-The core of the printing system can be found in the [Printer class](./src/main/java/com/example/demo/util/Printer.class), more specifically the printTrades method.
 
 ## Junit
 
