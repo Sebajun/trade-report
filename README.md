@@ -151,18 +151,21 @@ This approach is efficient because we can later develop a simple front end to cr
 Simply import the project in one of the above IDE, and launch the spring boot app.
 
 To generate the report make a get request with 3 params :
+
 ```http://localhost:8080/trade?product=AUDNZD FRD Exp14Jul2021&broker=BROKER A&date=20200408```
+
+<b> Important Note :</b> parameters with space are usually not encourged, but the url will be encoded so it is safe. Otherwise we could also make it work using body in a POST request for more solidity.
 
 | Param | Description |
 |---|---|
 |`product`  | Product's name<br> |
 |`broker`  | Broker's name
-|`date`  | date in <b>DDMMYYYY</b> format<br> |
+|`date`  | date in <b>YYYYMMDD</b> format<br> |
 
 ## Screenshot
 ![Postman screenshot](https://i.ibb.co/V2gNHrY/tg.png)
 
-<b> Important Note :</b> parameters with space are usually not encourged, but the url will be encoded so it is safe. Otherwise we could also make it work using body in a POST request for more solidity.
+
 
 ## Core Priting System
 
