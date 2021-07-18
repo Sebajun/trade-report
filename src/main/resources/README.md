@@ -4,9 +4,12 @@ Sample project technical excercise.
 
 There is no database needed, as the project is using an embedded one. To modify the database before starting the app, just modify the `data.sql` script
 
+### Prerequisites
+Intellij or Eclipse.
+
 ## Getting Started
 
-The app allows you to print trading reports.
+The app allows you to print trading reports through HTTP request.
 
 Assuming we have these 3 types of object  :
 
@@ -142,11 +145,8 @@ T-FWD-1;1;AUDNZD FRD Exp14Jul2021;20200408;1000000;B;1.067591
 
 This approach is efficient because we can later develop a simple front end to create new printing pattern to produce the desired printing report.
 
-### Prerequisites
 
-Intellij or Eclipse.
-
-### Installing
+## Installing and Running
 
 Simply import the project in one of the above IDE, and launch the spring boot app.
 
@@ -159,7 +159,20 @@ To generate the report make a get request with 3 params :
 |`broker`  | Broker's name
 |`date`  | date in <b>DDMMYYYY</b> format<br> |
 
+## Screenshot
+![Postman screenshot](https://i.ibb.co/V2gNHrY/tg.png)
+
 <b> Important Note :</b> parameters with space are usually not encourged, but the url will be encoded so it is safe. Otherwise we could also make it work using body in a POST request for more solidity.
+
+## Core Priting System
+
+The core of the printing system can be found in the [Printer class](./src/main/java/com/example/demo/util/Printer.class), more specifically the printTrades method.
+
+## Junit
+
+Unit test cases are provdided in the test folder.
+
+
 
 ## Built With
 
