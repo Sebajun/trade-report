@@ -14,7 +14,7 @@ The app allows you to print trading reports through HTTP request.
 Assuming we have these 3 types of object  :
 
 ### Product
-```json
+```
 product : {
     id,
     name
@@ -27,7 +27,7 @@ product : {
 |`name`  |  product name
 
 ### Broker
-```json
+```
 broker : {
     name, 
     id
@@ -39,7 +39,7 @@ broker : {
 |`name`  |  broker name
 
 ### Trade
-```json
+```
 trade : {
     id,
     tradeRef,
@@ -72,7 +72,7 @@ trade : {
 
 it is possible to create an infinite number of printing pattern by defining a priting pattern object like this :
 ### Printing Pattern
-```json
+```
 printing_pattern : {
     id, 
 	fieldsToPrint,
@@ -101,7 +101,7 @@ printing_pattern : {
 ### Example
 Given this trade and printing pattern 
 
-```json
+```
 trade : {
     id: 1,
     tradeRef : "T-FWD-1",
@@ -119,7 +119,7 @@ trade : {
     }
 }
 ```
-```json
+```
 printing_pattern : {
     id: 1, 
 	fieldsToPrint : "tradeRef, product.id, product.name, tradeDate, qty,buySell, price",
